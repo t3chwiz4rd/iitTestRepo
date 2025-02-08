@@ -1,32 +1,35 @@
-name: git-auto-commit
+name: Daily Commit Workflow
 
 on:
-  push:
-    branches:
-      - master
-  pull_request:
+  schedule:
+    # Runs at 00:00 UTC every day
+    - cron: '0 0 * * *'
+  workflow_dispatch:  # Allow manual triggers
 
 jobs:
-  git-auto-commit:
+  daily-commit:
     runs-on: ubuntu-latest
-
     permissions:
-      # Give the default GITHUB_TOKEN write permission.
-      # https://github.blog/changelog/2023-02-02-github-actions-updating-the-default-github_token-permissions-to-read-only/
-      contents: write
+      contents: write  # Grant write permissions to the repository
 
     steps:
-    - name: 21f1006867@ds.study.iitm.ac.in
-      uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v2
 
-    - name: Use git-auto-commit-action
-      id: "auto-commit-action"
-      uses: ./
+      # Set up the Git configuration
+      - name: Set up Git identity
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
 
-    - name: "no changes detected"
-      if: steps.auto-commit-action.outputs.changes_detected == 'false'
-      run: "echo \"No changes detected\""
+      # Create or modify a file (e.g., update_log.txt)
+      - name: Create a daily commit file
+        run: |
+          echo "Automated daily commit - $(date)" >> update_log.txt
 
-    - name: "changes detected"
-      if: steps.auto-commit-action.outputs.changes_detected == 'true'
-      run: "echo \"Changes detected\""
+      # Commit and push the changes
+      - name: Commit and push changes
+        run: |
+          git add update_log.txt
+          git commit -m "Automated commit - $(date)" || exit 0
+          git push
