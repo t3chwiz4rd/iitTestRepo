@@ -13,7 +13,7 @@ jobs:
       contents: write  # Grant write permissions to the repository
 
     steps:
-      - name: Checkout repository
+      - name: 21f1006867@ds.study.iitm.ac.in
         uses: actions/checkout@v2
 
       # Set up the Git configuration
