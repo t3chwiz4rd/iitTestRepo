@@ -23,13 +23,3 @@ jobs:
           git add update_log.txt
           git commit -m "Automated commit - $(date)"
           git push
-
-      # Push using GitHub token for authentication
-      - name: Push changes
-        env:
-          GH_TOKEN: ${{ secrets.GH_TOKEN }}
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
-          git push
