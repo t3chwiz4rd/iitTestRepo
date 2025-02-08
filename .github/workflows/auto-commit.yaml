@@ -3,9 +3,6 @@ name: Daily Commit Workflow
 on:
   schedule:
     - cron: '0 0 * * *'  # This runs the action every day at midnight UTC
-  push:
-    branches:
-      - main
 
 jobs:
   daily-commit:
@@ -16,10 +13,15 @@ jobs:
       - name: 21f1006867@ds.study.iitm.ac.in
         uses: actions/checkout@v2
 
-      # Create a commit
-      - name: Create a daily commit (21f1006867@ds.study.iitm.ac.in)
+      # Create or modify a file (can be any file you want to commit)
+      - name: Create a daily commit file
         run: |
-          echo "Updating repository with daily commit" >> update_log.txt
+          echo "Automated daily commit - $(date)" >> update_log.txt
+
+      - name: Commit and push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
           git add update_log.txt
           git commit -m "Automated commit - $(date)"
           git push
