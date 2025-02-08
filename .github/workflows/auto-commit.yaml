@@ -1,34 +1,35 @@
-name: Daily Auto Commit
+name: Daily Commit Workflow
 
 on:
   schedule:
-    - cron: "0 3 * * *"  # Runs daily at 03:00 UTC
-
-  workflow_dispatch:  # Allows manual triggering if needed
+    - cron: '0 0 * * *'  # This runs the action every day at midnight UTC
+  push:
+    branches:
+      - main
 
 jobs:
-  auto-commit:
+  daily-commit:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout the repository code
       - name: 21f1006867@ds.study.iitm.ac.in
-        run: |
-          echo "Hello world"
-          
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v2
 
-      - name: Update Log - 21f1006867@ds.study.iitm.ac.in
+      # Create a commit
+      - name: Create a daily commit (21f1006867@ds.study.iitm.ac.in)
         run: |
-          echo "Last run: $(date)" > update_log.txt
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "GitHub Actions"
-          git config --global user.email "21f1006867@ds.study.iitm.ac.in"
-
-      - name: Commit and Push Changes
-        run: |
+          echo "Updating repository with daily commit" >> update_log.txt
           git add update_log.txt
           git commit -m "Automated commit - $(date)"
+          git push
+
+      # Push using GitHub token for authentication
+      - name: Push changes
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}.git
           git push
